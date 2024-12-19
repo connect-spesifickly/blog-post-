@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import * as React from "react";
 // import { Filter } from "./components/filter";
@@ -15,9 +17,9 @@ import {
 import { useEffect, useState } from "react";
 
 export default function BlogPost() {
-  const [posts, setPost] = useState<{ items: any[] }>([]);
+  const [posts, setPost] = useState<{ items: any[] | undefined }>();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<unknown>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selelctedCategory, setSelectedCategory] =
     useState<string>("All Tournament");
@@ -29,8 +31,8 @@ export default function BlogPost() {
           content_type: "blogPost",
         });
         setPost(data);
-      } catch (error) {
-        setError(error);
+      } catch (err: unknown) {
+        setError(err);
       } finally {
         setLoading(false);
       }
@@ -39,16 +41,16 @@ export default function BlogPost() {
   }, []);
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (error) return <p>Error: error</p>;
 
   // untuk menyaring post pake useState
-  const filteredPosts = posts.items.filter((post) => {
-    const matchesSearchTerm = post.fields.title
+  const filteredPosts = posts?.items?.filter((post) => {
+    const matchesSearchTerm = post?.fields?.title
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     const matchesCategory =
       selelctedCategory === "All Tournament" ||
-      post.fields.categories === selelctedCategory;
+      post?.fields?.categories === selelctedCategory;
 
     return matchesSearchTerm && matchesCategory;
   });
@@ -139,7 +141,7 @@ export default function BlogPost() {
                   <div>
                     <div className="mx-[20px]">
                       <div className="carousel rounded-box flex gap-3 shadow-md">
-                        {filteredPosts.map(
+                        {filteredPosts?.map(
                           (blog, idx: React.Key | null | undefined) => (
                             <div key={idx} className="carousel-item">
                               <div className="">
